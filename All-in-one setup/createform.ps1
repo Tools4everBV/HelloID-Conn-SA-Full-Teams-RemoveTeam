@@ -1,4 +1,4 @@
-﻿# Enforce TLS1.2 JK 20200722
+# Enforce TLS1.2 JK 20200722
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
  
 #HelloID variables
