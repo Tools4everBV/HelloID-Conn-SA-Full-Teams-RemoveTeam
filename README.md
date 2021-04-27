@@ -40,3 +40,6 @@ This Delegated Form uses the following resources in order to run
 ### Task data source 'Teams-get-teams'
 
 ### Delegated form task 'Teams-remove-team'
+
+# HelloID Docs
+The official HelloID documentation can be found at: https://docs.helloid.com/
