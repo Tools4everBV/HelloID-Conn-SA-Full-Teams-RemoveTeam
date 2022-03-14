@@ -1,4 +1,0 @@
-{
-    "name":  "groupId",
-    "value":  "{{form.teams.GroupId}}"
-}
