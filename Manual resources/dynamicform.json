@@ -1,52 +1,81 @@
 [
-  {
-    "key": "teams",
-    "templateOptions": {
-      "label": "Select team",
-      "required": true,
-      "grid": {
-        "columns": [
-          {
-            "headerName": "Mail Nick Name",
-            "field": "MailNickName"
-          },
-          {
-            "headerName": "Archived",
-            "field": "Archived"
-          },
-          {
-            "headerName": "Display Name",
-            "field": "DisplayName"
-          },
-          {
-            "headerName": "Visibility",
-            "field": "Visibility"
-          },
-          {
-            "headerName": "Description",
-            "field": "Description"
-          },
-          {
-            "headerName": "Group Id",
-            "field": "GroupId"
-          }
-        ],
-        "height": 300,
-        "rowSelection": "single"
-      },
-      "dataSourceConfig": {
-        "dataSourceGuid": "$dataSourceGuid_0",
-        "input": {
-          "propertyInputs": []
-        }
-      },
-      "useFilter": true,
-      "useDefault": false
+    {
+        "templateOptions":  {
+
+                            },
+        "type":  "markdown",
+        "summaryVisibility":  "Hide element",
+        "body":  "**Beware that removing a team, is actually deleting a M365 group. Everything associated with the group is deleted as well!**",
+        "requiresTemplateOptions":  false,
+        "requiresKey":  false,
+        "requiresDataSource":  false
     },
-    "type": "grid",
-    "summaryVisibility": "Show",
-    "requiresTemplateOptions": true,
-    "requiresKey": true,
-    "requiresDataSource": true
-  }
+    {
+        "key":  "searchValue",
+        "templateOptions":  {
+                                "label":  "Search for DisplayName",
+                                "required":  true
+                            },
+        "type":  "input",
+        "summaryVisibility":  "Show",
+        "requiresTemplateOptions":  true,
+        "requiresKey":  true,
+        "requiresDataSource":  false
+    },
+    {
+        "key":  "teams",
+        "templateOptions":  {
+                                "label":  "Select Team",
+                                "required":  true,
+                                "grid":  {
+                                             "columns":  [
+                                                             {
+                                                                 "headerName":  "Display Name",
+                                                                 "field":  "DisplayName"
+                                                             },
+                                                             {
+                                                                 "headerName":  "Description",
+                                                                 "field":  "Description"
+                                                             },
+                                                             {
+                                                                 "headerName":  "Mail Nick Name",
+                                                                 "field":  "MailNickName"
+                                                             },
+                                                             {
+                                                                 "headerName":  "Mailaddress",
+                                                                 "field":  "Mailaddress"
+                                                             },
+                                                             {
+                                                                 "headerName":  "Visibility",
+                                                                 "field":  "Visibility"
+                                                             },
+                                                             {
+                                                                 "headerName":  "Group Id",
+                                                                 "field":  "GroupId"
+                                                             }
+                                                         ],
+                                             "height":  300,
+                                             "rowSelection":  "single"
+                                         },
+                                "dataSourceConfig":  {
+                                                         "dataSourceGuid":  "$dataSourceGuid_0",
+                                                         "input":  {
+                                                                       "propertyInputs":  [
+                                                                                              {
+                                                                                                  "propertyName":  "searchValue",
+                                                                                                  "otherFieldValue":  {
+                                                                                                                          "otherFieldKey":  "searchValue"
+                                                                                                                      }
+                                                                                              }
+                                                                                          ]
+                                                                   }
+                                                     },
+                                "useDefault":  false
+                            },
+        "type":  "grid",
+        "summaryVisibility":  "Show",
+        "requiresTemplateOptions":  true,
+        "requiresKey":  true,
+        "requiresDataSource":  true
+    }
 ]
