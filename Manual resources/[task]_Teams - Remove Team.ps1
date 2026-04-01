@@ -12,9 +12,6 @@
 
 #region init
 
-# Set TLS to accept TLS, TLS 1.1 and TLS 1.2
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12
-
 $VerbosePreference = "SilentlyContinue"
 $InformationPreference = "Continue"
 $WarningPreference = "Continue"
@@ -219,7 +216,7 @@ try {
     $baseSearchUri = "https://graph.microsoft.com/"
     $deleteTeamUri = $baseSearchUri + "v1.0/groups/$groupid"
 
-    $deleteTeam = Invoke-RestMethod -Method DELETE -Uri $deleteTeamUri -Headers $headers -Verbose:$false
+    $null = Invoke-RestMethod -Method DELETE -Uri $deleteTeamUri -Headers $headers -Verbose:$false
     
     $auditMessage = "Successfully deleted team [$team] with description [$description]."
     Write-Information $auditMessage
