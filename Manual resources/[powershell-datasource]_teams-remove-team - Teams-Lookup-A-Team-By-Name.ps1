@@ -1,14 +1,14 @@
 #######################################################################
-# Template: HelloID SA Delegated form task
-# Name:     Teams - Remove Team
-# Date:     04-03-2026
+# Template: HelloID SA Powershell data source
+# Name: teams-remove-team | Teams-Lookup-A-Team-By-Name
+# Date: 04-03-2026
 #######################################################################
 
-# For basic information about delegated form tasks see:
-# https://docs.helloid.com/en/service-automation/delegated-forms/delegated-form-powershell-scripts/add-a-powershell-script-to-a-delegated-form.html
+# For basic information about powershell data sources see:
+# https://docs.helloid.com/en/service-automation/dynamic-forms/data-sources/powershell-data-sources.html
 
 # Service automation variables:
-# https://docs.helloid.com/en/service-automation/service-automation-variables/service-automation-variable-reference.html
+# https://docs.helloid.com/en/service-automation/service-automation-variables.html
 
 #region init
 
@@ -26,9 +26,7 @@ $CertificateBase64String = $EntraIdCertificateBase64String
 $CertificatePassword = $EntraIdCertificatePassword
 
 # variables configured in form:
-$groupid = $form.teams.GroupId
-$team = $form.teams.DisplayName
-$description = $form.teams.Description
+$searchValue = $datasource.searchValue
 
 #endregion init
 
@@ -213,26 +211,40 @@ try {
         "Content-Type"     = "application/json"
         "ConsistencyLevel" = "eventual" # Needed to filter on specific attributes (https://docs.microsoft.com/en-us/graph/aad-advanced-queries)
     }
-    $actionMessage = "deleting Team [$team] with description [$description]"
+
+    $searchQuery = '"displayName:{0}" OR "mailNickname:{0}"' -f $searchValue
+    $actionMessage = "searching for Teams-enabled EntraID groups with query: $searchQuery"
     Write-Information $actionMessage
-
+ 
     $baseSearchUri = "https://graph.microsoft.com/"
-    $deleteTeamUri = $baseSearchUri + "v1.0/groups/$groupid"
-
-    $deleteTeam = Invoke-RestMethod -Method DELETE -Uri $deleteTeamUri -Headers $headers -Verbose:$false
-    
-    $auditMessage = "Successfully deleted team [$team] with description [$description]."
-    Write-Information $auditMessage
-    $Log = @{
-        Action            = "DeleteResource" # optional. ENUM (undefined = default) 
-        System            = "MicrosoftTeams" # optional (free format text) 
-        Message           = $auditMessage # required (free format text) 
-        IsError           = $false # optional. Elastic reporting purposes only. (default = $false. $true = Executed action returned an error) 
-        TargetDisplayName = $team # optional (free format text)
-        TargetIdentifier  = $groupid # optional (free format text)
+    $searchUri = $baseSearchUri + "v1.0/groups" + "?`$filter=resourceProvisioningOptions/Any(x:x eq 'Team')" + "&`$search=$searchQuery" + '&$top=999'
+    $teamsResponse = Invoke-RestMethod -Uri $searchUri -Method Get -Headers $headers -Verbose:$false          
+    $teams = $teamsResponse.value
+    while (![string]::IsNullOrEmpty($teamsResponse.'@odata.nextLink')) {
+        $teamsResponse = Invoke-RestMethod -Uri $teamsResponse.'@odata.nextLink' -Method Get -Headers $headers -Verbose:$false
+        $teams += $teamsResponse.value
     }
-    #send result back  
-    Write-Information -Tags "Audit" -MessageData $log
+
+    $teams = $teams | Sort-Object -Property DisplayName
+    $resultCount = @($teams).Count
+    Write-Information -Message "Result count: $resultCount"
+         
+    if ($resultCount -gt 0) {
+        foreach ($team in $teams) {
+            $returnObject = @{
+                DisplayName  = $team.DisplayName
+                Description  = $team.Description
+                MailNickName = $team.MailNickName
+                Mailaddress  = $team.Mail
+                Visibility   = $team.Visibility
+                GroupId      = $team.Id
+            }
+            Write-Output $returnObject
+        }
+    }
+    else {
+        return
+    }
 }
 catch {
     $ex = $PSItem
@@ -246,16 +258,6 @@ catch {
         $auditMessage = "Error $($actionMessage). Error: $($ex.Exception.Message)"
         $warningMessage = "Error at Line [$($ex.InvocationInfo.ScriptLineNumber)]: $($ex.InvocationInfo.Line). Error: $($ex.Exception.Message)"
     }
-    $Log = @{
-        Action            = "DeleteResource" # optional. ENUM (undefined = default) 
-        System            = "MicrosoftTeams" # optional (free format text) 
-        Message           = $actionMessage # required (free format text) 
-        IsError           = $true # optional. Elastic reporting purposes only. (default = $false. $true = Executed action returned an error) 
-        TargetDisplayName = $team # optional (free format text) 
-        TargetIdentifier  = $groupid # optional (free format text) 
-    }
-    Write-Information -Tags "Audit" -MessageData $log
     Write-Warning $warningMessage
     Write-Error $auditMessage
 }
-
