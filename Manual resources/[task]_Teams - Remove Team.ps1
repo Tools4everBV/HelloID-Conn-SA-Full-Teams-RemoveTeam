@@ -17,10 +17,11 @@ $InformationPreference = "Continue"
 $WarningPreference = "Continue"
 
 # global variables (Automation --> Variable library):
-$TenantId = $EntraIdTenantId
-$AppId = $EntraIdAppId
-$CertificateBase64String = $EntraIdCertificateBase64String
-$CertificatePassword = $EntraIdCertificatePassword
+# Outcommented as these are set from Global Variables
+# $EntraIdTenantId = ""
+# $EntraIdAppId = ""
+# $EntraIdCertificateBase64String = ""
+# $EntraIdCertificatePassword = ""
 
 # variables configured in form:
 $groupid = $form.teams.GroupId
@@ -231,6 +232,4 @@ catch {
     Write-Warning $warningMessage
     Write-Error $auditMessage
 }
-
-
 
