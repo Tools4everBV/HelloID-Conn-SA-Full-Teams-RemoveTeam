@@ -1,0 +1,13 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
+
+## [2.0.0] - 01-04-2026
+
+### Changed
+- Change authentication to certificate based
+- Updated the repo according to the latest conventions
+
+## [1.0.0] - 18-10-2022
+
+Initial release
